@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>GroupTest01</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body>
+    <div id="flash_messages"><%= flash_messages(:close) %></div>
+
+    <% if user_signed_in? %>
+      <span><%= current_user.name %></span>
+      <%= link_to :로그아웃, destroy_user_session_path, method: :delete %>
+      <%= link_to '사용자 정보수정', edit_user_registration_path %>
+    <% else %>
+      <%= link_to :로그인, new_user_session_path %>
+    <% end %>
+
+    <%= yield %>
+  </body>
+</html>
