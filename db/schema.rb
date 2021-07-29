@@ -10,12 +10,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_27_130817) do
+ActiveRecord::Schema.define(version: 2021_07_29_011239) do
 
   create_table "groups", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "post_recipient_groups", force: :cascade do |t|
+    t.integer "recipient_group_id"
+    t.integer "post_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["post_id"], name: "index_post_recipient_groups_on_post_id"
+    t.index ["recipient_group_id"], name: "index_post_recipient_groups_on_recipient_group_id"
+  end
+
+  create_table "post_recipients", force: :cascade do |t|
+    t.integer "recipient_id"
+    t.integer "post_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["post_id"], name: "index_post_recipients_on_post_id"
+    t.index ["recipient_id"], name: "index_post_recipients_on_recipient_id"
   end
 
   create_table "posts", force: :cascade do |t|

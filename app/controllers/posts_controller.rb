@@ -29,6 +29,21 @@ class PostsController < ApplicationController
 
     respond_to do |format|
       if @post.save
+
+        # 사용자에게 글 남기기 테스트
+#        post_recipient = PostRecipient.new
+#        post_recipient.recipient_id = current_user.id
+#        post_recipient.post_id = @post.id
+#        post_recipient.save!
+
+        # 그룹에 글 남기기 테스트
+        current_user.groups.each do |g|
+          post_recipient_group = PostRecipientGroup.new
+          post_recipient_group.recipient_group_id = g.id
+          post_recipient_group.post_id = @post.id
+          post_recipient_group.save!
+        end
+
         format.html { redirect_to @post, notice: "Post was successfully created." }
         format.json { render :show, status: :created, location: @post }
       else
