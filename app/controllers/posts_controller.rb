@@ -29,6 +29,13 @@ class PostsController < ApplicationController
 
     respond_to do |format|
       if @post.save
+
+        post_recipient = PostRecipient.new
+        post_recipient.recipient_id = current_user.id
+        #post_recipient.recipient_group_id = 0
+        post_recipient.post_id = @post.id
+        post_recipient.save!
+
         format.html { redirect_to @post, notice: "Post was successfully created." }
         format.json { render :show, status: :created, location: @post }
       else

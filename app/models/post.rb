@@ -4,4 +4,6 @@ class Post < ApplicationRecord
 
   # belongs_to :user, :counter_cache => :posts_count
   belongs_to :user
+
+  has_many :post_recipients
 end
