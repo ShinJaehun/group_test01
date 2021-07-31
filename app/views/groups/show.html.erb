@@ -7,12 +7,12 @@
 </p>
 
 <p>
-  <strong>Group User Name:</strong>
+  <strong>Group User Name</strong>
   <% @group.users.each do |user| %>
-  <li>
-    <%= user.name %>
-  </li>
-<% end %>
+    <li>
+      <%= user.name %>
+    </li>
+  <% end %>
 </p>
 
 <% if !current_user.groups.include?(@group) %>
@@ -30,3 +30,29 @@
   <%= link_to 'Edit', edit_group_path(@group) %> |
 <% end %>
 <%= link_to 'Back', groups_path %>
+
+<p>
+  <strong>Group User Post</strong>
+  <% @posts.each do |post| %>
+  <li>
+    <%= post.content %> by <%= post.user.name %>
+  </li>
+  <% end %>
+</p>
+
+<%#= form_for([@post, @post.post_recipient_groups.build]) do |form| %>
+<%= form_for(Post.new) do |form| %>
+  <%= hidden_field_tag :group_id, @group.id %>
+  <!-- group_id가 post 모델의 attribute가 아니므로 hidden_field 대신 hidden_field_tag를 사용함 -->
+  <!-- 근데 빌어먹을 hidden_field_tag로 넘어가는 params를 사용하지 못하겠다... -->
+  <!-- 완전 별거 아니었음... post_params 대신 params로 받아야지... -->
+
+  <div class="field">
+    <%= form.label :content %>
+    <%= form.text_area :content %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

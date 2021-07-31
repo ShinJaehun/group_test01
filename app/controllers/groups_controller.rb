@@ -8,6 +8,12 @@ class GroupsController < ApplicationController
   end
 
   def show
+    puts '#########################################'
+    puts @group.post_recipient_groups.pluck(:post_id)
+    puts '#########################################'
+    # 이렇게 하면 post_id를 배열로 추출할 수 있음!
+
+    @posts = Post.find(@group.post_recipient_groups.pluck(:post_id))
   end
 
   def new
