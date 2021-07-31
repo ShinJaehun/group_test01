@@ -10,7 +10,8 @@
   <strong>Group User Name</strong>
   <% @group.users.each do |user| %>
     <li>
-      <%= user.name %>
+      <%#= user.name %>
+      <%= link_to user.name, user %>
     </li>
   <% end %>
 </p>
@@ -42,7 +43,8 @@
 
 <%#= form_for([@post, @post.post_recipient_groups.build]) do |form| %>
 <%= form_for(Post.new) do |form| %>
-  <%= hidden_field_tag :group_id, @group.id %>
+  <%= hidden_field_tag :type, 'group' %>
+  <%= hidden_field_tag :receiver_id, @group.id %>
   <!-- group_id가 post 모델의 attribute가 아니므로 hidden_field 대신 hidden_field_tag를 사용함 -->
   <!-- 근데 빌어먹을 hidden_field_tag로 넘어가는 params를 사용하지 못하겠다... -->
   <!-- 완전 별거 아니었음... post_params 대신 params로 받아야지... -->

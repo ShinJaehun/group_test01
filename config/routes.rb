@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   root 'posts#index'
   resources :posts
   resources :groups
+  resources :users, only:[:show]
 
   post 'add_user_to_group/:id', to: 'groups#add_user_to_group', as: 'add_user_to_group'
   delete 'remove_user_from_group/:id', to: 'groups#remove_user_from_group', as: 'remove_user_from_group'

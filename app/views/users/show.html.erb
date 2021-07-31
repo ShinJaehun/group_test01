@@ -1,0 +1,32 @@
+<p id="notice"><%= notice %></p>
+
+<ul>
+<p>
+  <strong>User Name:</strong>
+  <%= @user.name %>
+</p>
+
+<%= link_to 'Back', groups_path %>
+
+<p>
+  <strong>User Post</strong>
+  <% @posts.each do |post| %>
+  <li>
+    <%= post.content %> by <%= post.user.name %>
+  </li>
+  <% end %>
+</p>
+
+<%= form_for(Post.new) do |form| %>
+  <%= hidden_field_tag :type, 'user' %>
+  <%= hidden_field_tag :receiver_id, @user.id %>
+
+  <div class="field">
+    <%= form.label :content %>
+    <%= form.text_area :content %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

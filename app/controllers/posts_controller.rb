@@ -29,7 +29,9 @@ class PostsController < ApplicationController
 
     puts '###################################'
 #    puts post_params
-    puts params[:group_id]
+#    puts params[:group_id]
+    puts params[:type]
+    puts params[:receiver_id]
     puts post_params[:post]
     puts '###################################'
 
@@ -48,16 +50,20 @@ class PostsController < ApplicationController
 #          post_recipient_group.post_id = @post.id
 #          post_recipient_group.save!
 #        end
+    if params[:type] == 'group'
+      post_recipient_group = PostRecipientGroup.new
+      post_recipient_group.recipient_group_id = params[:receiver_id]
+      # 아 븅시나 post_params[:group_id]로 하면 이걸 받을 수가 있겠냐고!
+      # hidden_field_tag로 넘기는 값은 permit할 필요가 없는거구나...
+      post_recipient_group.post_id = @post.id
+      post_recipient_group.save!
+    else params[:type] == 'user'
+      post_recipient = PostRecipient.new
+      post_recipient.recipient_id = params[:receiver_id]
+      post_recipient.post_id = @post.id
+      post_recipient.save!
+    end
 
-    post_recipient_group = PostRecipientGroup.new
-    post_recipient_group.recipient_group_id = params[:group_id]
-    # 아 븅시나 post_params[:group_id]로 하면 이걸 받을 수가 있겠냐고!
-    # hidden_field_tag로 넘기는 값은 permit할 필요가 없는거구나...
-    post_recipient_group.post_id = @post.id
-    post_recipient_group.save!
-
-    #format.html { redirect_to @post, notice: "Post was successfully created." }
-    #format.json { render :show, status: :created, location: @post }
     redirect_back(fallback_location: root_path)
 
   end

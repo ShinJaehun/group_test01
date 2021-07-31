@@ -11,6 +11,6 @@ class User < ApplicationRecord
   has_many :user_groups
   has_many :groups, through: :user_groups
 
-  has_many :post_recipients
+  has_many :post_recipients, foreign_key: :recipient_id
 
 end
