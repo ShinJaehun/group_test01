@@ -2,6 +2,8 @@ class GroupsController < ApplicationController
   #before_action :set_group, only: %i[ show edit update destroy ]
   before_action :set_group, except: %i[ index new create ]
   before_action :authenticate_user!
+  load_and_authorize_resource except: %i[ index new create ]
+  # 이렇게 해야 그룹에 속하지 않은 user가 새로 group을 생성할 수 있음.
 
   def index
     #@groups = Group.all

@@ -9,7 +9,6 @@ class UsersController < ApplicationController
     @posts = Post.find(@user.post_recipients.pluck(:post_id))
   end
 
-
   private
 
   def set_user
