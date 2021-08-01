@@ -6,8 +6,6 @@
   <%= @user.name %>
 </p>
 
-<%= link_to 'Back', groups_path %>
-
 <p>
   <strong>User Post</strong>
   <% @posts.each do |post| %>
@@ -30,3 +28,5 @@
     <%= form.submit %>
   </div>
 <% end %>
+
+<%= link_to 'Back', root_path %>

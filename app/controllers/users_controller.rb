@@ -7,7 +7,6 @@ class UsersController < ApplicationController
     puts '#########################################'
 
     @posts = Post.find(@user.post_recipients.pluck(:post_id))
-
   end
 
 
