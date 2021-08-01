@@ -32,6 +32,7 @@ class GroupsController < ApplicationController
       flash.now[:danger] = "That group name has already been taken."
       render 'new'
     else
+
       @group.save
       # usergroup 먼저 save 불가. 아마도 group.id 때문이 아닐까?
 
@@ -57,6 +58,16 @@ class GroupsController < ApplicationController
   end
 
   def destroy
+    @posts = Post.find(@group.post_recipient_groups.pluck(:post_id))
+    unless @posts.blank?
+      @posts.each do |p|
+        p.destroy
+      end
+    end
+    # post_recipient_groups와 user_groups 모두 삭제되는데 post_recipient_group에 연결된 posts는 그대로 남아 있음...
+    # 그래서 이렇게 group에 속한 post를 모두 삭제한 다음에 group을 삭제할 수 있음
+    # 언젠가 혹시 모를 일에 대비하기 위해 post는 삭제하지 말고 놔둬야 하는가?
+
     @group.destroy
     respond_to do |format|
       format.html { redirect_to groups_url, notice: "Group was successfully destroyed." }
