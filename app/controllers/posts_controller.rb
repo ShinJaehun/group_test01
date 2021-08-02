@@ -7,6 +7,7 @@ class PostsController < ApplicationController
   def index
     #@posts = Post.all
     @posts = Post.find(current_user.post_recipients.pluck(:post_id))
+    @post = Post.new
   end
 
   # GET /posts/1 or /posts/1.json
@@ -16,7 +17,6 @@ class PostsController < ApplicationController
   # GET /posts/new
   def new
     @post = Post.new
-
   end
 
   # GET /posts/1/edit

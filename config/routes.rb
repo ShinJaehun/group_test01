@@ -6,6 +6,6 @@ Rails.application.routes.draw do
   resources :groups
   resources :users, only:[:show]
 
-  post 'add_user_to_group/:id', to: 'groups#add_user_to_group', as: 'add_user_to_group'
-  delete 'remove_user_from_group/:id', to: 'groups#remove_user_from_group', as: 'remove_user_from_group'
+  post 'join_group/:id', to: 'groups#join_group', as: 'join_group'
+  delete 'leave_group/:id', to: 'groups#leave_group', as: 'leave_group'
 end

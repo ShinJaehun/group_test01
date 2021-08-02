@@ -17,13 +17,13 @@
 </p>
 
 <% if !current_user.groups.include?(@group) %>
-  <%= form_tag add_user_to_group_path(@group) do %>
+  <%= form_tag join_group_path(@group) do %>
     <button type="submit" class="btn btn-lg">Join</button>
   <% end %>
 <% else %>
   <!-- 여기서 creator가 떠날 수 있게 해야 하는가? -->
-  <%= form_tag remove_user_from_group_path(@group) do %>
-    <%= link_to "Leave", { :action => "remove_user_from_group" }, class: "btn btn-lg", method: "delete", data: { confirm: "Are you sure??" } %>
+  <%= form_tag leave_group_path(@group) do %>
+    <%= link_to "Leave", { :action => "leave_group" }, class: "btn btn-lg", method: "delete", data: { confirm: "Are you sure??" } %>
   <% end %>
 <% end %>
 
@@ -34,11 +34,20 @@
 
 <p>
   <strong>Group User Post</strong>
-  <% @posts.each do |post| %>
-  <li>
-    <%= post.content %> by <%= post.user.name %>
-  </li>
-  <% end %>
+  <table>
+    <tbody>
+      <% @posts.each do |post| %>
+        <tr>
+          <td><%= post.content %></td>
+          <td>by <%= post.user.name %></td>
+          <% if can? :manage, post %>
+            <td><%= link_to 'Edit', edit_post_path(post) %></td>
+            <td><%= link_to 'Destroy', post, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 </p>
 
 <%#= form_for([@post, @post.post_recipient_groups.build]) do |form| %>

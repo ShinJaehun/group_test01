@@ -20,10 +20,7 @@ class Ability
       # 와 정상 동작한다!
 
       #can :manage, Project, group: { id: user.group_ids }
-
-
       #can :manage, Group, { :user_group => { :user_id => user.id } }
-
       #can :manage, Group, Group.joins(user_groups: :users).where(user_groups: {users: {id: user.id}})
       #실패
       #can :manage, User, User.joins(groups: :users).where(groups: {users: {id: user.id}})
