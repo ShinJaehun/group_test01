@@ -25,48 +25,34 @@ class PostsController < ApplicationController
 
   # POST /posts or /posts.json
   def create
-    #@post = Post.new(post_params)
     @post = current_user.posts.new(post_params)
 
-    puts '###################################'
-#    puts post_params
-#    puts params[:group_id]
-    puts params[:type]
-    puts params[:receiver_id]
-    puts post_params[:post]
-    puts '###################################'
-
-    @post.save
-
-      # 사용자에게 글 남기기 테스트
-#        post_recipient = PostRecipient.new
-#        post_recipient.recipient_id = current_user.id
-#        post_recipient.post_id = @post.id
-#        post_recipient.save!
-
-      # 그룹에 글 남기기 테스트
-#        current_user.groups.each do |g|
-#          post_recipient_group = PostRecipientGroup.new
-#          post_recipient_group.recipient_group_id = g.id
-#          post_recipient_group.post_id = @post.id
-#          post_recipient_group.save!
-#        end
     if params[:type] == 'group'
-      post_recipient_group = PostRecipientGroup.new
-      post_recipient_group.recipient_group_id = params[:receiver_id]
-      # 아 븅시나 post_params[:group_id]로 하면 이걸 받을 수가 있겠냐고!
-      # hidden_field_tag로 넘기는 값은 permit할 필요가 없는거구나...
-      post_recipient_group.post_id = @post.id
-      post_recipient_group.save!
-    else params[:type] == 'user'
+#    puts '###################################'
+#    puts params[:receiver_id]
+#    puts Group.find(params[:receiver_id])
+#    puts current_user.has_role? :group_member, Group.find(params[:receiver_id])
+#    puts '###################################'
+      if current_user.has_role? :group_member, Group.find(params[:receiver_id])
+        @post.save
+        post_recipient_group = PostRecipientGroup.new
+        post_recipient_group.recipient_group_id = params[:receiver_id]
+        post_recipient_group.post_id = @post.id
+        post_recipient_group.save!
+        redirect_back(fallback_location: root_path, flash: {notice: "그룹에 글을 작성했습니다!"})
+      else
+        redirect_back(fallback_location: root_path, flash: {notice: "그룹에 글을 남길 권한 없음!"})
+      end
+    elsif params[:type] == 'user'
+      @post.save
       post_recipient = PostRecipient.new
       post_recipient.recipient_id = params[:receiver_id]
       post_recipient.post_id = @post.id
       post_recipient.save!
+      redirect_back(fallback_location: root_path, flash: {notice: "글을 작성했습니다!"})
+    else
+      redirect_to root_path, flash: {notice: "뭐시여 이건 그룹 포스트도 아니여 유저 포스트도 아니여..."}
     end
-
-    redirect_back(fallback_location: root_path)
-
   end
 
   # PATCH/PUT /posts/1 or /posts/1.json

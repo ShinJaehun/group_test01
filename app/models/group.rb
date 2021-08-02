@@ -1,4 +1,6 @@
 class Group < ApplicationRecord
+  resourcify
+
   has_many :user_groups, dependent: :destroy
   # groups.destroy를 할 때 InvalidForeignKey FOREIGN KEY constraint failed 오류가 발생함
   # post_recipient_groups에만 해당하는 내용인줄 알았는데 user_groups도 association이 걸려있기 때문에
@@ -12,13 +14,13 @@ class Group < ApplicationRecord
 
   validates :name, presence: true, uniqueness: true
 
-  # after_save :join_user_group_by_creating
+#  after_save :join_user_group_by_creating
 
   private
 
-  def join_user_group_by_creating
-    # @usergroup = UserGroup.create!(user_id: self.user_id, group_id: self.id)
-    # 이게 안되는 이유는 group에 user_id가 없어서 이기 때문...(사실 굳이 있을 필요는 없지)
-  end
+#  def join_user_group_by_creating
+#    #@usergroup = UserGroup.create!(user_id: self.user_id, group_id: self.id)
+#    # 이게 안되는 이유는 group에 user_id가 없어서 이기 때문...(사실 굳이 있을 필요는 없지)
+#  end
 
 end

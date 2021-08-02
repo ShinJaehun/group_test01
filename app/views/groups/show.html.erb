@@ -40,7 +40,7 @@
         <tr>
           <td><%= post.content %></td>
           <td>by <%= post.user.name %></td>
-          <% if can? :manage, post %>
+          <% if current_user.has_role? :group_manager, @group %>
             <td><%= link_to 'Edit', edit_post_path(post) %></td>
             <td><%= link_to 'Destroy', post, method: :delete, data: { confirm: 'Are you sure?' } %></td>
           <% end %>

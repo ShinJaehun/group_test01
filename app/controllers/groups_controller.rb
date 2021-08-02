@@ -45,6 +45,10 @@ class GroupsController < ApplicationController
       @usergroup.group_id = @group.id
       @usergroup.save
 
+      current_user.add_role :group_manager, @group
+      current_user.add_role :group_member, @group
+      # 생성한 그룹에 대해 group_manager role 부여
+
       respond_to do |format|
         format.html { redirect_to @group, notice: "Group was successfully created." }
       end
@@ -68,6 +72,8 @@ class GroupsController < ApplicationController
         p.destroy
       end
     end
+    current_user.remove_role :group_member, @group
+    current_user.remove_role :group_manager, @group
     # post_recipient_groups와 user_groups 모두 삭제되는데 post_recipient_group에 연결된 posts는 그대로 남아 있음...
     # 그래서 이렇게 group에 속한 post를 모두 삭제한 다음에 group을 삭제할 수 있음
     # 언젠가 혹시 모를 일에 대비하기 위해 post는 삭제하지 말고 놔둬야 하는가?
@@ -84,6 +90,8 @@ class GroupsController < ApplicationController
       @usergroup.user_id = current_user.id
       @usergroup.group_id = @group.id
       @usergroup.save
+
+      current_user.add_role :group_member, @group
       redirect_to @group, notice: "You've been added to #{@group.name}."
     else
       redirect_to groups_path, notice: "You're already a member of #{@group.name}."
@@ -91,6 +99,7 @@ class GroupsController < ApplicationController
   end
 
   def leave_group
+    current_user.remove_role :group_member, @group
     usergroup = current_user.user_groups.find_by_group_id(@group.id)
     usergroup.destroy
     current_user.save!

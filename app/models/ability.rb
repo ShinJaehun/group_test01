@@ -10,13 +10,22 @@ class Ability
     if user.present?
       if user.has_role?(:admin)
         can :manage, :all
+      else
+
+        can :manage, Post, user_id: user.id
+        # 이것 때문인지 몰라도 로그인만 하면 아무데나 막글을 쓸 수 있다.
+        can :update, User, id: user.id
+
+        can :read, Group
+        #can :manage, Group if user.has_role?(:group_manager, Group)
+        #can :write, Group, :id => Group.with_role(:group_member, user).pluck(:id)
+        can :manage, Group, :id => Group.with_role(:group_manager, user).pluck(:id)
+#        can :manage, Post, :id =>
+#        user.post_recipient_groups.recipient_ids
+#        g2.post_recipient_groups.pluck(:post_id)
       end
 
-      can :manage, Post, user_id: user.id
-      # 이것 때문인지 몰라도 로그인만 하면 아무데나 막글을 쓸 수 있다.
-      can :update, User, id: user.id
-
-      can :manage, Group, id: user.group_ids
+      #can :manage, Group, id: user.group_ids
       # 와 정상 동작한다!
 
       #can :manage, Project, group: { id: user.group_ids }
