@@ -12,6 +12,13 @@
     <li>
       <%#= user.name %>
       <%= link_to user.name, user %>
+        (
+        <% user.roles.each do |r| %>
+          <% if r.resource_id == @group.id %>
+            <%= r.name %>
+          <% end %>
+        <% end %>
+        )
     </li>
   <% end %>
 </p>
@@ -40,7 +47,8 @@
         <tr>
           <td><%= post.content %></td>
           <td>by <%= post.user.name %></td>
-          <% if current_user.has_role? :group_manager, @group %>
+          <% if current_user.has_role? :group_manager, @group or can? :manage, post %>
+          <%# if (current_user.has_role? :group_manager, @group ) or true %>
             <td><%= link_to 'Edit', edit_post_path(post) %></td>
             <td><%= link_to 'Destroy', post, method: :delete, data: { confirm: 'Are you sure?' } %></td>
           <% end %>

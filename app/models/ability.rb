@@ -20,6 +20,10 @@ class Ability
         #can :manage, Group if user.has_role?(:group_manager, Group)
         #can :write, Group, :id => Group.with_role(:group_member, user).pluck(:id)
         can :manage, Group, :id => Group.with_role(:group_manager, user).pluck(:id)
+
+        if user.groups.pluck(:id) == Group.with_role(:group_manager, user).pluck(:id)
+          can :manage, Post
+        end
 #        can :manage, Post, :id =>
 #        user.post_recipient_groups.recipient_ids
 #        g2.post_recipient_groups.pluck(:post_id)
