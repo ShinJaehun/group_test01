@@ -21,10 +21,12 @@ class GroupsController < ApplicationController
 
     @posts = Post.find(@group.post_recipient_groups.pluck(:post_id))
 
-    @pending_users = User.includes(:user_groups).where("user_groups.state": "pending")
+    # @pending_users = User.includes(:user_groups).where("user_groups.state": "pending")
+    # 이렇게 하면 사용자가 다른 그룹에서 pending하고 있어도 pending_users에 포함됨
+    @pending_users = User.find(@group.user_groups.where(state: "pending").pluck(:user_id))
     @active_users = User.find(@group.user_groups.where(state: "active").pluck(:user_id))
     #이렇게 구현할 수 있지만 다양한 방법을 알아두는 게 필요함!
-    #둘 중에 뭐가 더 나은 구현인가?
+    #결국 내가 맞았다!
   end
 
   def new
@@ -149,6 +151,27 @@ class GroupsController < ApplicationController
       else
         redirect_to groups_path, notice: "user/group 오류 또는 pending 상태가 아님"
       end
+    else
+      redirect_to groups_path, notice: "group_manager가 아님"
+    end
+  end
+
+  def suspend_user
+    suspend_user = User.find(params[:suspend_user_id])
+
+    if current_user.has_role? :group_manager, @group
+      usergroup = suspend_user.user_groups.find_by_group_id(@group.id)
+
+      if usergroup.state == 'active' && usergroup.user_id == suspend_user.id && usergroup.group_id == @group.id
+        usergroup.state = 'pending'
+        usergroup.save
+        suspend_user.remove_role :group_member, @group
+        redirect_to @group, notice: "#{suspend_user.name}'s been suspended."
+      else
+        redirect_to groups_path, notice: "user/group 오류 또는 pending 상태가 아님"
+      end
+    else
+      redirect_to groups_path, notice: "group_manager가 아님"
     end
   end
 
