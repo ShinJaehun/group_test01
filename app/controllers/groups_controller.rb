@@ -71,24 +71,32 @@ class GroupsController < ApplicationController
   end
 
   def destroy
-    @posts = Post.find(@group.post_recipient_groups.pluck(:post_id))
+    if current_user.has_role? :group_manager, @group
+      if User.find(@group.user_groups.where(state: "active").pluck(:user_id)).count == 1 and @group.user_groups.where(state: "active").pluck(:user_id).first == current_user.id
+      # group_member가 단 한명이고 그게 나라면 그룹 삭제 가능
+      # 그룹 멤버가 있는 상태에서 삭제 못하는 정책?
 
-    unless @posts.blank?
-      @posts.each do |p|
-        p.destroy
+        @posts = Post.find(@group.post_recipient_groups.pluck(:post_id))
+        unless @posts.blank?
+          @posts.each do |p|
+            p.destroy
+          end
+        end
+        # post_recipient_groups와 user_groups 모두 삭제되는데 post_recipient_group에 연결된 posts는 그대로 남아 있음...
+        # 그래서 이렇게 group에 속한 post를 모두 삭제한 다음에 group을 삭제할 수 있음
+        # 언젠가 혹시 모를 일에 대비하기 위해 post는 삭제하지 말고 놔둬야 하는가?
+
+        # current_user.remove_role :group_member, @group
+        # current_user.remove_role :group_manager, @group
+        # 그룹 권한 삭제 : 굳이 할 필요 없음 rolify에서 dependent: destroy로 처리하는 거 같음.
+
+        @group.destroy
+        redirect_to groups_url, notice: "Group was successfully destroyed."
+      else
+        redirect_to groups_url, notice: "group_manager를 제외하고 group_member가 존재하면 그룹 삭제 불가 "
       end
-    end
-    # post_recipient_groups와 user_groups 모두 삭제되는데 post_recipient_group에 연결된 posts는 그대로 남아 있음...
-    # 그래서 이렇게 group에 속한 post를 모두 삭제한 다음에 group을 삭제할 수 있음
-    # 언젠가 혹시 모를 일에 대비하기 위해 post는 삭제하지 말고 놔둬야 하는가?
-
-    # current_user.remove_role :group_member, @group
-    # current_user.remove_role :group_manager, @group
-    # 그룹 권한 삭제 : 굳이 할 필요 없음 rolify에서 dependent: destroy로 처리하는 거 같음.
-
-    @group.destroy
-    respond_to do |format|
-      format.html { redirect_to groups_url, notice: "Group was successfully destroyed." }
+    else
+      redirect_to groups_url, notice: "group_manager가 아님"
     end
   end
 
@@ -147,6 +155,7 @@ class GroupsController < ApplicationController
         usergroup.state = 'active'
         usergroup.save
         apply_user.add_role :group_member, @group
+        # 멤버 승인하면서 group_member role 부여
         redirect_to @group, notice: "#{apply_user.name}'s been approved."
       else
         redirect_to groups_path, notice: "user/group 오류 또는 pending 상태가 아님"
