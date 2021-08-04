@@ -22,6 +22,7 @@
   <% end %>
 </p>
 
+<!-- 이 부분은 관리자인 경우에만 보이도록 render -->
 <p>
   <strong>Request to join</strong>
   <table>
@@ -29,11 +30,17 @@
         <% @pending_users.each do |pu| %>
         <tr>
           <td><%= pu.name %></td>
+          <td>
+            <%= form_tag cancel_apply_path(@group), method: "delete" do %>
+              <%= hidden_field_tag :apply_user_id, pu.id %>
+              <button type="submit" class="btn btn-lg">cancel</button>
+            <% end %>
+          </td>
           <% if current_user.has_role? :group_manager, @group %>
             <td>
               <%= form_tag approve_user_path(@group) do %>
                 <%= hidden_field_tag :apply_user_id, pu.id %>
-                <button type="submit" class="btn btn-lg">Approve</button>
+                <button type="submit" class="btn btn-lg">approve</button>
               <% end %>
             </td>
           <% end %>

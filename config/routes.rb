@@ -10,4 +10,5 @@ Rails.application.routes.draw do
   post 'apply_group/:id', to: 'groups#apply_group', as: 'apply_group'
   post 'approve_user/:id', to: 'groups#approve_user', as: 'approve_user'
   delete 'leave_group/:id', to: 'groups#leave_group', as: 'leave_group'
+  delete 'cancel_apply/:id', to: 'groups#cancel_apply', as: 'cancel_apply'
 end
